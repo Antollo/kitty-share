@@ -8,7 +8,7 @@ passport.use(
     new GoogleStrategy({
         clientID: keys.google.clientID,
         clientSecret: keys.google.clientSecret,
-        callbackURL: '/auth/google/redirect'
+        callbackURL: 'https://kitty-share.herokuapp.com/auth/google/redirect'
     }, async (_accessToken, _refreshToken, profile, done) => {
         //console.log(JSON.stringify(profile, null, 4))
         try {

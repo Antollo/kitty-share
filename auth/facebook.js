@@ -8,7 +8,7 @@ passport.use(
     new FacebookStrategy({
         clientID: keys.facebook.clientID,
         clientSecret: keys.facebook.clientSecret,
-        callbackURL: '/auth/facebook/redirect',
+        callbackURL: 'https://kitty-share.herokuapp.com/auth/facebook/redirect',
         profileFields: ['id', 'displayName', 'name', 'emails', 'picture.type(large)']
     }, async (_accessToken, _refreshToken, profile, done) => {
         //console.log(JSON.stringify(profile, null, 4))
