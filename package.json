@@ -1,0 +1,26 @@
+{
+  "name": "kitty-share",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && npm install && npm run-script build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-session": "^1.4.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.1",
+    "mongoose": "^5.10.2",
+    "passport": "^0.4.1",
+    "passport-facebook": "^3.0.0",
+    "passport-github": "^1.1.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

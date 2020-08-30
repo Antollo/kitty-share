@@ -1,0 +1,21 @@
+a {
+  text-decoration: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-block-start: 2px;
+  margin-block-end: 2px;
+}
+
+body,
+#root {
+  height: 100%;
+}
+
+@import url("https://pro.fontawesome.com/releases/v5.10.0/css/all.css");
