@@ -75,7 +75,10 @@ class PostForm extends React.Component {
             },
             body: JSON.stringify({ content: this.state.content })
         })
-            .then(response => response.json())
+            .then(response => {
+                this.props.onNewPost()
+                return response.json()
+            })
             .then(data => console.log(data))
             .catch(error => console.error(error))
 

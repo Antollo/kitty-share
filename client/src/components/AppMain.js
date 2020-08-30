@@ -11,15 +11,18 @@ class AppMain extends React.Component {
     constructor(props) {
         super(props)
 
+        this.initialPosts = (new Array(5)).fill({ loading: true })
+
         this.state = {
             path: this.props.location.pathname.slice(1) + this.props.location.search,
             push: true,
             name: this._name(),
-            photo: this._photo()
+            photo: this._photo(),
+            posts: this.initialPosts
         }
 
-        this.handleLogout = this.handleLogout.bind(this)
         this.setPath = this.setPath.bind(this)
+        this.fetchPosts = this.fetchPosts.bind(this)
     }
 
     _name() {
@@ -46,20 +49,25 @@ class AppMain extends React.Component {
         })
     }
 
-    handleLogout() {
-        console.log('handleLogout')
-        this.setState({
-            name: this._name(),
-            photo: this._photo()
+    fetchPosts() {
+        fetch('/api/posts', {
+            method: 'GET',
         })
+            .then(response => response.json())
+            .then(data => this.setState({ posts: data }))
+            .catch(error => console.error(error))
+    }
+
+    componentDidMount() {
+        this.fetchPosts()
     }
 
     render() {
         return (
             <>
-                <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} />
-                <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} />
-                <LogoutHandler name={this.state.name} handleLogout={this.handleLogout} >
+                <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts}/>
+                <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts}/>
+                <LogoutHandler name={this.state.name} >
                     <PathRedirect path={this.state.path} push={this.state.push} />
                 </LogoutHandler>
             </>

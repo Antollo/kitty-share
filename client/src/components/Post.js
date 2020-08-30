@@ -27,6 +27,10 @@ const useStyles = (theme) => ({
     },
     expandClose: {
         transform: 'rotate(0deg)'
+    },
+    content: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1)
     }
 })
 
@@ -63,7 +67,7 @@ class Post extends React.Component {
                             (new Date(this.props.date)).toLocaleString()
                     }
                 />
-                <CardContent>
+                <CardContent className={classes.content}>
                     {
                         this.props.loading ? (
                             <>

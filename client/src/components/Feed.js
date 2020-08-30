@@ -28,21 +28,10 @@ const useStyles = (theme) => ({
         margin: theme.spacing(2, 0, 2),
     },
     container: {
-        marginTop: theme.spacing(4),
-        marginBottom: theme.spacing(2),
+        paddingTop: theme.spacing(4),
+        paddingBottom: theme.spacing(4),
     },
-    warning: {
-        margin: theme.spacing(0, 0, 0)
-    },
-    area: {
-        height: 'calc(100vh - 56px)',
-        [`${theme.breakpoints.up('xs')} and (orientation: landscape)`]: {
-            height: 'calc(100vh - 48px)',
-        },
-        [theme.breakpoints.up('sm')]: {
-            height: 'calc(100vh - 64px)',
-        },
-    }
+    toolbar: theme.mixins.toolbar
 })
 
 class Feed extends React.Component {
@@ -50,44 +39,23 @@ class Feed extends React.Component {
     constructor(props) {
         super(props)
 
-        this.initialPosts = (new Array(5)).fill({ loading: true })
-
-        this.state = {
-            posts: this.initialPosts
-        }
-
-        this.fetchPosts = this.fetchPosts.bind(this)
         this.search = this.search.bind(this)
-    }
-
-    fetchPosts() {
-        this.setState({ posts: this.initialPosts })
-
-        fetch('/api/posts', {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => this.setState({ posts: data }))
-            .catch(error => console.error(error))
     }
 
     search() {
         const searchText = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).search
         if (searchText && searchText.length)
-            return this.state.posts.filter(post => searchText.split(/\s+/).every(el => post.loading || post.content.indexOf(el) !== -1))
+            return this.props.posts.filter(post => searchText.split(/\s+/).every(el => post.loading || post.content.indexOf(el) !== -1))
         else
-            return this.state.posts
-    }
-
-    componentDidMount() {
-        this.fetchPosts()
+            return this.props.posts
     }
 
     render() {
         const { classes } = this.props
         return (
-            <PerfectScrollbar className={classes.area}>
-                <Container maxWidth="sm" className={classes.container}>
+            /*<PerfectScrollbar>*/
+            <>
+                <Container maxWidth="sm" className={classes.container} >
                     <Grid container spacing={4} wrap="nowrap" direction="column">
                         {
                             this.search().map(
@@ -107,8 +75,10 @@ class Feed extends React.Component {
                             )
                         }
                     </Grid>
-                </Container>
-            </PerfectScrollbar>
+                </Container >
+                <div className={classes.toolbar} />
+            </>
+            /*</PerfectScrollbar>*/
         )
     }
 }

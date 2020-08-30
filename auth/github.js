@@ -9,7 +9,7 @@ passport.use(
         clientID: keys.github.clientID,
         clientSecret: keys.github.clientSecret
     }, async (_accessToken, _refreshToken, profile, done) => {
-        console.log(JSON.stringify(profile, null, 4))
+        //console.log(JSON.stringify(profile, null, 4))
         try {
             let user = await User.findOne({ googleId: profile.id })
             if (user)

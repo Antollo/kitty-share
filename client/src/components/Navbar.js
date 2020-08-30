@@ -36,6 +36,7 @@ const useStyles = (theme) => ({
     appBar: {
         top: 'auto',
         bottom: 0,
+        alignIItems: 'baseline'
     },
     grow: {
         flexGrow: 1,
@@ -95,20 +96,19 @@ class Navbar extends React.Component {
                 <CssBaseline />
                 <AppBar position="fixed" color="default" className={classes.appBar}>
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={() => this.setState({ open: true })}>
-                            <MenuIcon />
-                        </IconButton>
-
-                        <PostForm searchText={this.state.searchText} name={this.props.name} photo={this.props.photo} />
+                        <PostForm searchText={this.state.searchText} name={this.props.name} photo={this.props.photo} onNewPost={this.props.onNewPost}/>
 
                         <Paper component="form" className={classes.searchField} onSubmit={this.handleSearchTextSubmit}>
+                            <IconButton color="inherit" onClick={() => this.setState({ open: true })}>
+                                <MenuIcon />
+                            </IconButton>
                             <InputBase
                                 className={classes.input}
                                 placeholder="Search"
                                 onChange={this.handleSearchText}
                                 value={this.state.searchText}
                             />
-                            <IconButton type="submit" className={classes.iconButton}>
+                            <IconButton type="submit" size="medium" className={classes.iconButton}>
                                 <SearchIcon />
                             </IconButton>
                         </Paper>
