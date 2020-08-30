@@ -29,10 +29,22 @@ const useStyles = (theme) => ({
         transform: 'rotate(0deg)'
     },
     content: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1)
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1)
     }
 })
+
+class Image extends React.Component {
+    render() {
+        return (
+            <img
+                className="markdown"
+                alt={this.props.alt}
+                src={this.props.src}
+            />
+        )
+    }
+}
 
 class Post extends React.Component {
     constructor(props) {
@@ -78,7 +90,7 @@ class Post extends React.Component {
                             </>
                         ) : (
                                 <Typography component="div" variant="body1">
-                                    <ReactMarkdown source={this.props.content} />
+                                    <ReactMarkdown source={this.props.content} renderers={{ image: Image }} />
                                 </Typography>
                             )
                     }

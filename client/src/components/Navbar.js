@@ -45,9 +45,18 @@ const useStyles = (theme) => ({
         width: 'auto',
     },
     searchField: {
-        padding: '0px 0px',
+        padding: '4px 0px',
+        [`${theme.breakpoints.up('xs')} and (orientation: landscape)`]: {
+            padding: '8px 0px',
+        },
+        [theme.breakpoints.up('sm')]: {
+            padding: '8px 0px',
+        },
         display: 'flex',
         flexGrow: 1
+    },
+    menuButton: {
+        marginRight: theme.spacing(1)
     },
     input: {
         marginLeft: theme.spacing(1),
@@ -96,19 +105,20 @@ class Navbar extends React.Component {
                 <CssBaseline />
                 <AppBar position="fixed" color="default" className={classes.appBar}>
                     <Toolbar>
-                        <PostForm searchText={this.state.searchText} name={this.props.name} photo={this.props.photo} onNewPost={this.props.onNewPost}/>
+                        <IconButton edge="start" color="inherit" className={classes.menuButton} onClick={() => this.setState({ open: true })}>
+                            <MenuIcon />
+                        </IconButton>
+
+                        <PostForm searchText={this.state.searchText} name={this.props.name} photo={this.props.photo} onNewPost={this.props.onNewPost} />
 
                         <Paper component="form" className={classes.searchField} onSubmit={this.handleSearchTextSubmit}>
-                            <IconButton color="inherit" onClick={() => this.setState({ open: true })}>
-                                <MenuIcon />
-                            </IconButton>
                             <InputBase
                                 className={classes.input}
                                 placeholder="Search"
                                 onChange={this.handleSearchText}
                                 value={this.state.searchText}
                             />
-                            <IconButton type="submit" size="medium" className={classes.iconButton}>
+                            <IconButton type="submit" size="small" className={classes.iconButton}>
                                 <SearchIcon />
                             </IconButton>
                         </Paper>

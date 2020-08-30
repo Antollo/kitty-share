@@ -5,7 +5,6 @@ import qs from 'qs'
 import React from 'react'
 import { withRouter } from 'react-router'
 import 'react-perfect-scrollbar/dist/css/styles.css'
-import PerfectScrollbar from 'react-perfect-scrollbar'
 import Post from './Post'
 
 
