@@ -7,12 +7,22 @@ import Collapse from '@material-ui/core/Collapse'
 import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import React from 'react'
-import ReactMarkdown from 'react-markdown'
 import Skeleton from '@material-ui/lab/Skeleton'
+import Comments from './Comments.js'
+import Badge from '@material-ui/core/Badge';
+import ReactMarkdownOptimized from './ReactMarkdownOptimized'
+
+const StyledBadge = withStyles(() => ({
+    badge: {
+        right: -6,
+        top: -6
+    }
+}))(Badge)
 
 const useStyles = (theme) => ({
     expand: {
@@ -31,96 +41,134 @@ const useStyles = (theme) => ({
     content: {
         paddingTop: theme.spacing(1),
         paddingBottom: theme.spacing(1)
+    },
+    buttonBase: {
+        display: 'block'
     }
 })
-
-class Image extends React.Component {
-    render() {
-        return (
-            <img
-                className="markdown"
-                alt={this.props.alt}
-                src={this.props.src}
-            />
-        )
-    }
-}
 
 class Post extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            expanded: false
+            expanded: false,
+            likeCount: 0,
+            dislikeCount: 0
         }
+
+        this.like = this.like.bind(this)
+        this.dislike = this.dislike.bind(this)
+        this.expand = this.expand.bind(this)
+    }
+
+    like(event) {
+        event.stopPropagation()
+        this.setState({ likeCount: (this.state.likeCount ? 0 : 1) * (this.props.likes ? -1 : 1) })
+        if (this.props._id && this.props._id.length)
+            fetch(`/api/posts/like/${this.props._id}`, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error(error))
+    }
+
+    dislike(event) {
+        event.stopPropagation()
+        this.setState({ dislikeCount: (this.state.dislikeCount ? 0 : 1) * (this.props.dislikes ? -1 : 1) })
+        if (this.props._id && this.props._id.length)
+            fetch(`/api/posts/dislike/${this.props._id}`, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error(error))
+    }
+
+    expand(event) {
+        event.stopPropagation()
+        this.setState({ expanded: !this.state.expanded })
     }
 
     render() {
         const { classes } = this.props
+
         return (
-            <Card>
-                <CardHeader
-                    avatar={
-                        this.props.loading ?
-                            <Skeleton animation="wave" variant="circle" width={40} height={40} />
-                            :
-                            <Avatar alt={this.props.name} src={this.props.photo} />
-                    }
-                    title={
-                        this.props.loading ?
-                            <Skeleton animation="wave" height={10} width="50%" style={{ marginBottom: 6 }} />
-                            :
-                            this.props.name
-                    }
-                    subheader={
-                        this.props.loading ?
-                            <Skeleton animation="wave" height={10} width="30%" />
-                            :
-                            (new Date(this.props.date)).toLocaleString()
-                    }
-                />
-                <CardContent className={classes.content}>
+            <ButtonBase component="div" className={classes.buttonBase}>
+                <Card>
+                    <CardHeader
+                        avatar={
+                            this.props.loading ?
+                                <Skeleton animation="wave" variant="circle" width={40} height={40} />
+                                :
+                                <Avatar alt={this.props.userName} src={this.props.userPhoto} />
+                        }
+                        title={
+                            this.props.loading ?
+                                <Skeleton animation="wave" height={10} width="50%" style={{ marginBottom: 6 }} />
+                                :
+                                this.props.userName
+                        }
+                        subheader={
+                            this.props.loading ?
+                                <Skeleton animation="wave" height={10} width="30%" />
+                                :
+                                (new Date(this.props.date)).toLocaleString()
+                        }
+                    />
+                    <CardContent className={classes.content}>
+                        {
+                            this.props.loading ? (
+                                <>
+                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                    <Skeleton animation="wave" height={10} width="80%" />
+                                </>
+                            ) : (
+                                    <Typography component="div" variant="body1">
+                                        <ReactMarkdownOptimized source={this.props.content} enableLargeImage />
+                                    </Typography>
+                                )
+                        }
+                    </CardContent>
                     {
-                        this.props.loading ? (
+                        this.props.loading ? null : (
                             <>
-                                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                <Skeleton animation="wave" height={10} width="80%" />
+                                <CardActions disableSpacing>
+
+                                    <IconButton onClick={this.like}>
+                                        <StyledBadge badgeContent={this.props.likeCount + this.state.likeCount} color="primary">
+                                            <ThumbUpIcon fontSize="small" color={((this.props.likes ? 1 : 0) + this.state.likeCount) ? 'primary' : undefined} />
+                                        </StyledBadge>
+                                    </IconButton>
+
+                                    <IconButton onClick={this.dislike}>
+                                        <StyledBadge badgeContent={this.props.dislikeCount + this.state.dislikeCount} color="secondary">
+                                            <ThumbDownIcon fontSize="small" color={((this.props.dislikes ? 1 : 0) + this.state.dislikeCount) ? 'secondary' : undefined} />
+                                        </StyledBadge>
+                                    </IconButton>
+
+                                    {this.props.noComments ? null :
+                                        <IconButton
+                                            className={classes.expand + ' ' + (this.state.expanded ? classes.expandOpen : classes.expandClose)}
+                                            onClick={this.expand}
+                                        >
+                                            <ExpandMoreIcon />
+                                        </IconButton>
+                                    }
+                                </CardActions>
+                                {this.props.noComments ? null :
+                                    <Collapse in={this.state.expanded} timeout="auto" >
+                                        <Comments name={this.props.name} photo={this.props.photo} comments={this.props.comments} parentId={this.props._id}/>
+                                    </Collapse>
+                                }
                             </>
-                        ) : (
-                                <Typography component="div" variant="body1">
-                                    <ReactMarkdown source={this.props.content} renderers={{ image: Image }} />
-                                </Typography>
-                            )
+                        )
                     }
-                </CardContent>
-                {
-                    this.props.loading ? null : (
-                        <>
-                            <CardActions disableSpacing>
-                                <IconButton>
-                                    <ThumbUpIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton>
-                                    <ThumbDownIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                    className={classes.expand + ' ' + (this.state.expanded ? classes.expandOpen : classes.expandClose)}
-                                    onClick={() => this.setState({ expanded: !this.state.expanded })}
-                                >
-                                    <ExpandMoreIcon />
-                                </IconButton>
-                            </CardActions>
-                            <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-                                <CardContent>
-                                    {this.props.children}
-                                </CardContent>
-                            </Collapse>
-                        </>
-                    )
-                }
-            </Card>
+                </Card>
+            </ButtonBase>
         )
     }
 }

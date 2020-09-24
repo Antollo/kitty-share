@@ -29,7 +29,7 @@ const useStyles = (theme) => ({
         margin: theme.spacing(2, 0, 2),
     },
     or: {
-        margin: theme.spacing(2, 0, 2),
+        margin: theme.spacing(1, 0, 3),
     },
     warning: {
         margin: theme.spacing(0, 0, 0)

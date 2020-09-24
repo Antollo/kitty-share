@@ -4,7 +4,7 @@ import Feed from './Feed'
 import LogoutHandler from './LogoutHandler'
 import Navbar from './Navbar'
 import PathRedirect from './PathRedirect'
-import { withRouter } from 'react-router'
+import { Switch, Route, withRouter } from 'react-router'
 
 class AppMain extends React.Component {
 
@@ -54,7 +54,10 @@ class AppMain extends React.Component {
             method: 'GET',
         })
             .then(response => response.json())
-            .then(data => this.setState({ posts: data }))
+            .then(data => {
+                this.setState({ posts: data })
+                console.log(data)
+            })
             .catch(error => console.error(error))
     }
 
@@ -65,8 +68,15 @@ class AppMain extends React.Component {
     render() {
         return (
             <>
-                <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts}/>
-                <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts}/>
+                <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts} />
+                <Switch>
+                    <Route path="/post/:id">
+                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} onAction={this.fetchPosts} />
+                    </Route>
+                    <Route>
+                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} onAction={this.fetchPosts} />
+                    </Route>
+                </Switch>
                 <LogoutHandler name={this.state.name} >
                     <PathRedirect path={this.state.path} push={this.state.push} />
                 </LogoutHandler>

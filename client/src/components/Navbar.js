@@ -45,12 +45,12 @@ const useStyles = (theme) => ({
         width: 'auto',
     },
     searchField: {
-        padding: '4px 0px',
+        padding: '4px 4px',
         [`${theme.breakpoints.up('xs')} and (orientation: landscape)`]: {
-            padding: '8px 0px',
+            padding: '8px 8px',
         },
         [theme.breakpoints.up('sm')]: {
-            padding: '8px 0px',
+            padding: '8px 8px',
         },
         display: 'flex',
         flexGrow: 1

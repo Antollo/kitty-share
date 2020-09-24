@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles'
 import qs from 'qs'
 import React from 'react'
 import { withRouter } from 'react-router'
-import 'react-perfect-scrollbar/dist/css/styles.css'
 import Post from './Post'
 
 
@@ -33,6 +32,7 @@ const useStyles = (theme) => ({
     toolbar: theme.mixins.toolbar
 })
 
+@withRouter
 class Feed extends React.Component {
 
     constructor(props) {
@@ -44,9 +44,13 @@ class Feed extends React.Component {
     search() {
         const searchText = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).search
         if (searchText && searchText.length)
-            return this.props.posts.filter(post => searchText.split(/\s+/).every(el => post.loading || post.content.indexOf(el) !== -1))
-        else
-            return this.props.posts
+            return this.props.posts.filter(post => searchText.toLowerCase().split(/\s+/).every(el => post.loading || post.content.toLowerCase().indexOf(el) !== -1))
+        else {
+            if (this.props.posts && this.props.posts.length)
+                return this.props.posts
+            else
+                return []
+        }
     }
 
     render() {
@@ -55,7 +59,7 @@ class Feed extends React.Component {
             /*<PerfectScrollbar>*/
             <>
                 <Container maxWidth="sm" className={classes.container} >
-                    <Grid container spacing={4} wrap="nowrap" direction="column">
+                    <Grid container spacing={4} wrap="nowrap" direction="column-reverse">
                         {
                             this.search().map(
                                 (post, id) => (
@@ -63,10 +67,18 @@ class Feed extends React.Component {
                                         <Post
                                             {...(post.loading ? { loading: true } : {
                                                 loading: false,
-                                                name: post.user.name,
-                                                photo: post.user.photo,
+                                                _id: post._id,
+                                                userName: post.user.name,
+                                                userPhoto: post.user.photo,
                                                 date: post.date,
-                                                content: post.content
+                                                content: post.content,
+                                                likes: post.likes && post.likes.length !== 0,
+                                                likeCount: post.likeCount,
+                                                dislikes: post.dislikes && post.dislikes.length !== 0,
+                                                dislikeCount: post.dislikeCount,
+                                                name: this.props.name,
+                                                photo: this.props.photo,
+                                                comments: post.comments
                                             })}
                                         />
                                     </Grid>
@@ -82,4 +94,4 @@ class Feed extends React.Component {
     }
 }
 
-export default withStyles(useStyles)(withRouter(Feed))
+export default withStyles(useStyles)(Feed)

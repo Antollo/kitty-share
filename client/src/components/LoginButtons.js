@@ -1,67 +1,63 @@
-import Button from '@material-ui/core/Button'
-import Icon from '@material-ui/core/Icon'
-import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles'
-import React from 'react'
+import Fab from '@material-ui/core/Fab';
+import Grid from '@material-ui/core/Grid';
+import Icon from '@material-ui/core/Icon';
+import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import React from 'react';
 
 const facebookTheme = createMuiTheme({ palette: { primary: { main: '#4267B2' } } })
 const googleTheme = createMuiTheme({ palette: { primary: { main: '#DB4437' } } })
 const githubTheme = createMuiTheme({ palette: { primary: { main: '#f5f5f5' } } })
 
 const useStyles = (theme) => ({
-    first: {
-        margin: theme.spacing(0, 0, 1)
+    button: {
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: 0
     },
-    second: {
-        margin: theme.spacing(0, 0, 1)
-    },
-    third: {
-        margin: theme.spacing(0, 0, 1)
-    },
+    centerButton: {
+        marginLeft: theme.spacing(2),
+        marginRight: theme.spacing(2),
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: 0
+    }
 })
 
 class LoginButtons extends React.Component {
 
     render() {
-        const { classes } = this.props
         return (
-            <>
+            <Grid
+                container
+                direction="row"
+                justify="space-around"
+                alignItems="baseline"
+            >
                 <ThemeProvider theme={facebookTheme}>
-                    <Button
-                        fullWidth
-                        variant="contained"
+                    <Fab 
                         color="primary"
-                        className={classes.first}
-                        startIcon={<Icon className="fab fa-facebook" />}
                         href="/auth/facebook"
                     >
-                        Facebook
-                        </Button>
+                        <Icon fontSize="d" className="fab fa-facebook" />
+                    </Fab >
                 </ThemeProvider>
                 <ThemeProvider theme={googleTheme}>
-                    <Button
-                        fullWidth
-                        variant="contained"
+                    <Fab
                         color="primary"
-                        className={classes.first}
-                        startIcon={<Icon className="fab fa-google" />}
                         href="/auth/google"
                     >
-                        Google
-                        </Button>
+                        <Icon fontSize="d" className="fab fa-google" />
+                    </Fab>
                 </ThemeProvider>
                 <ThemeProvider theme={githubTheme}>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.first}
-                        startIcon={<Icon className="fab fa-github" />}
+                    <Fab
+                        color="primary" 
                         href="/auth/github"
                     >
-                        Github
-                        </Button>
+                        <Icon fontSize="d" className="fab fa-github" />
+                    </Fab>
                 </ThemeProvider>
-            </>
+            </Grid>
         )
     }
 }

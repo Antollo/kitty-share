@@ -4,7 +4,6 @@ import Container from '@material-ui/core/Container'
 import Dialog from '@material-ui/core/Dialog'
 import Fab from '@material-ui/core/Fab'
 import Grid from '@material-ui/core/Grid'
-import Icon from '@material-ui/core/Icon'
 import IconButton from '@material-ui/core/IconButton'
 import Slide from '@material-ui/core/Slide'
 import { withStyles } from '@material-ui/core/styles'
@@ -17,6 +16,7 @@ import Zoom from '@material-ui/core/Zoom'
 import AddIcon from '@material-ui/icons/Add'
 import CloseIcon from '@material-ui/icons/Close'
 import SubjectIcon from '@material-ui/icons/Subject'
+import SendIcon from '@material-ui/icons/Send'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import React from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -106,7 +106,7 @@ class PostForm extends React.Component {
                                 <Typography variant="h6" className={classes.title}>
                                     New post
                                 </Typography>
-                                <Button type="submit" color="inherit" onClick={() => this.setState({ open: false })} endIcon={<Icon>send</Icon>}>
+                                <Button type="submit" color="inherit" onClick={() => this.setState({ open: false })} endIcon={<SendIcon />}>
                                     Post
                             </Button>
                             </Toolbar>
@@ -132,6 +132,7 @@ class PostForm extends React.Component {
                                 <TextField
                                     autoFocus
                                     margin="normal"
+                                    name="content"
                                     required
                                     fullWidth
                                     label="Post content"
@@ -145,7 +146,17 @@ class PostForm extends React.Component {
                             <Container maxWidth="sm" className={classes.container}>
                                 <Grid container wrap="nowrap" direction="column">
                                     <Grid item>
-                                        <Post content={this.state.content} name={this.props.name} photo={this.props.photo} date={(new Date()).toISOString()} />
+                                        <Post
+                                            content={this.state.content}
+                                            userName={this.props.name}
+                                            userPhoto={this.props.photo}
+                                            date={(new Date()).toISOString()}
+                                            likeCount={0}
+                                            dislikeCount={0}
+                                            noComments
+                                            name={this.state.name}
+                                            photo={this.state.photo}
+                                        />
                                     </Grid>
                                 </Grid>
                             </Container>
