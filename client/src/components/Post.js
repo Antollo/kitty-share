@@ -1,4 +1,6 @@
 import Avatar from '@material-ui/core/Avatar'
+import Badge from '@material-ui/core/Badge'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
@@ -7,14 +9,13 @@ import Collapse from '@material-ui/core/Collapse'
 import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import ButtonBase from '@material-ui/core/ButtonBase'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
-import React from 'react'
+import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import Skeleton from '@material-ui/lab/Skeleton'
+import React from 'react'
 import Comments from './Comments.js'
-import Badge from '@material-ui/core/Badge';
+import ConditionalLink from './ConditionalLink.js'
 import ReactMarkdownOptimized from './ReactMarkdownOptimized'
 
 const StyledBadge = withStyles(() => ({
@@ -95,80 +96,82 @@ class Post extends React.Component {
         const { classes } = this.props
 
         return (
-            <ButtonBase component="div" className={classes.buttonBase}>
-                <Card>
-                    <CardHeader
-                        avatar={
-                            this.props.loading ?
-                                <Skeleton animation="wave" variant="circle" width={40} height={40} />
-                                :
-                                <Avatar alt={this.props.userName} src={this.props.userPhoto} />
-                        }
-                        title={
-                            this.props.loading ?
-                                <Skeleton animation="wave" height={10} width="50%" style={{ marginBottom: 6 }} />
-                                :
-                                this.props.userName
-                        }
-                        subheader={
-                            this.props.loading ?
-                                <Skeleton animation="wave" height={10} width="30%" />
-                                :
-                                (new Date(this.props.date)).toLocaleString()
-                        }
-                    />
-                    <CardContent className={classes.content}>
-                        {
-                            this.props.loading ? (
-                                <>
-                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                    <Skeleton animation="wave" height={10} width="80%" />
-                                </>
-                            ) : (
-                                    <Typography component="div" variant="body1">
-                                        <ReactMarkdownOptimized source={this.props.content} enableLargeImage />
-                                    </Typography>
-                                )
-                        }
-                    </CardContent>
-                    {
-                        this.props.loading ? null : (
-                            <>
-                                <CardActions disableSpacing>
-
-                                    <IconButton onClick={this.like}>
-                                        <StyledBadge badgeContent={this.props.likeCount + this.state.likeCount} color="primary">
-                                            <ThumbUpIcon fontSize="small" color={((this.props.likes ? 1 : 0) + this.state.likeCount) ? 'primary' : undefined} />
-                                        </StyledBadge>
-                                    </IconButton>
-
-                                    <IconButton onClick={this.dislike}>
-                                        <StyledBadge badgeContent={this.props.dislikeCount + this.state.dislikeCount} color="secondary">
-                                            <ThumbDownIcon fontSize="small" color={((this.props.dislikes ? 1 : 0) + this.state.dislikeCount) ? 'secondary' : undefined} />
-                                        </StyledBadge>
-                                    </IconButton>
-
-                                    {this.props.noComments ? null :
-                                        <IconButton
-                                            className={classes.expand + ' ' + (this.state.expanded ? classes.expandOpen : classes.expandClose)}
-                                            onClick={this.expand}
-                                        >
-                                            <ExpandMoreIcon />
-                                        </IconButton>
-                                    }
-                                </CardActions>
-                                {this.props.noComments ? null :
-                                    <Collapse in={this.state.expanded} timeout="auto" >
-                                        <Comments name={this.props.name} photo={this.props.photo} comments={this.props.comments} parentId={this.props._id}/>
-                                    </Collapse>
-                                }
-                            </>
-                        )
+            <Card>
+                <CardHeader
+                    avatar={
+                        this.props.loading ?
+                            <Skeleton animation="wave" variant="circle" width={40} height={40} />
+                            :
+                            <Avatar alt={this.props.user.name} src={this.props.user.photo} />
                     }
-                </Card>
-            </ButtonBase>
+                    title={
+                        this.props.loading ?
+                            <Skeleton animation="wave" height={10} width="50%" style={{ marginBottom: 6 }} />
+                            :
+                            this.props.user.name
+                    }
+                    subheader={
+                        this.props.loading ?
+                            <Skeleton animation="wave" height={10} width="30%" />
+                            :
+                            (new Date(this.props.date)).toLocaleString()
+                    }
+                />
+                <ButtonBase component="div" className={classes.buttonBase}>
+                    <ConditionalLink to={this.props._id ? `/post/${this.props._id}` : null}>
+                        <CardContent className={classes.content}>
+                            {
+                                this.props.loading ? (
+                                    <>
+                                        <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                        <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                        <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                        <Skeleton animation="wave" height={10} width="80%" />
+                                    </>
+                                ) : (
+                                        <Typography component="div" variant="body1">
+                                            <ReactMarkdownOptimized source={this.props.content} enableLargeImage />
+                                        </Typography>
+                                    )
+                            }
+                        </CardContent>
+                    </ConditionalLink>
+                </ButtonBase>
+                {
+                    this.props.loading ? null : (
+                        <>
+                            <CardActions disableSpacing>
+
+                                <IconButton onClick={this.like}>
+                                    <StyledBadge badgeContent={this.props.likeCount + this.state.likeCount} color="primary">
+                                        <ThumbUpIcon fontSize="small" color={((this.props.likes ? 1 : 0) + this.state.likeCount) ? 'primary' : undefined} />
+                                    </StyledBadge>
+                                </IconButton>
+
+                                <IconButton onClick={this.dislike}>
+                                    <StyledBadge badgeContent={this.props.dislikeCount + this.state.dislikeCount} color="secondary">
+                                        <ThumbDownIcon fontSize="small" color={((this.props.dislikes ? 1 : 0) + this.state.dislikeCount) ? 'secondary' : undefined} />
+                                    </StyledBadge>
+                                </IconButton>
+
+                                {this.props.noComments ? null :
+                                    <IconButton
+                                        className={classes.expand + ' ' + (this.state.expanded ? classes.expandOpen : classes.expandClose)}
+                                        onClick={this.expand}
+                                    >
+                                        <ExpandMoreIcon />
+                                    </IconButton>
+                                }
+                            </CardActions>
+                            {this.props.noComments ? null :
+                                <Collapse in={this.state.expanded} timeout="auto" >
+                                    <Comments name={this.props.name} photo={this.props.photo} comments={this.props.comments} parentId={this.props._id} />
+                                </Collapse>
+                            }
+                        </>
+                    )
+                }
+            </Card >
         )
     }
 }

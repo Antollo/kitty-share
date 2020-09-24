@@ -65,7 +65,6 @@ class PostForm extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log(this.state.content)
 
         fetch('/api/posts/add', {
             method: 'POST',
@@ -148,8 +147,7 @@ class PostForm extends React.Component {
                                     <Grid item>
                                         <Post
                                             content={this.state.content}
-                                            userName={this.props.name}
-                                            userPhoto={this.props.photo}
+                                            user={{name: this.props.name, photo: this.props.photo}}
                                             date={(new Date()).toISOString()}
                                             likeCount={0}
                                             dislikeCount={0}

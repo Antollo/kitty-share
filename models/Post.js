@@ -5,9 +5,9 @@ const Post = model('Post', {
     user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
     date: { type: Date, default: Date.now, required: true },
     likeCount: { type: Number, default: 0, required: true },
-    likes: [Schema.Types.ObjectId],
+    likes: [{type : Schema.Types.ObjectId, ref: 'User', default: [], required: true }],
     dislikeCount: { type: Number, default: 0, required: true },
-    dislikes: [Schema.Types.ObjectId],
+    dislikes: [{type : Schema.Types.ObjectId, ref: 'User', default: [], required: true }],
     topLevel: { type: Boolean, required: false },
     comments: [{ type : Schema.Types.ObjectId, ref: 'Post', default: [], required: true }]
 })

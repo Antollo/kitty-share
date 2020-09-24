@@ -1,7 +1,8 @@
 import { withStyles } from '@material-ui/core/styles'
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import { withProps } from "recompose";
+import { withProps } from 'recompose'
+import { Link } from '@material-ui/core'
 
 const useStyles = (theme) => ({
     image: {
@@ -28,7 +29,7 @@ class Image extends React.Component {
     }
 
     onLoad() {
-        console.log(this.img.current.clientWidth, this.img.current.naturalWidth)
+        //console.log(this.img.current.clientWidth, this.img.current.naturalWidth)
         if (this.img.current.clientWidth < this.img.current.naturalWidth && this.props.enableLargeImage)
             this.setState({
                 large: true
@@ -36,7 +37,7 @@ class Image extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.img.current)
+        //console.log(this.img.current)
         this.img.current.addEventListener('load', this.onLoad)
     }
 
@@ -68,7 +69,7 @@ class ReactMarkdownOptimized extends React.Component {
     }
 
     render() {
-        return <ReactMarkdown {...this.props} renderers={{ image: withStyles(useStyles)(withProps(this.props)(Image)) }} />
+        return <ReactMarkdown {...this.props} renderers={{ image: withStyles(useStyles)(withProps(this.props)(Image)), link: Link }} />
     }
 }
 

@@ -31,7 +31,7 @@ router.post('/add', [
                 }
             )
 
-            return res.status(201).json({ _id: id })
+            return res.status(201).json({ messages: ['ok'], _id: id })
         } else {
             await new Post({
                 content: req.body.content,
@@ -58,10 +58,9 @@ router.get('/like/:postId', [
 
     try {
 
-        const x = await Post.deleteMany({
+        /*await Post.deleteMany({
             content: /^[\s\S]$/
-        })
-        //console.log(x)
+        })*/
 
 
         if ((await Post.updateOne(
@@ -129,16 +128,57 @@ router.get('/dislike/:postId', [
     }
 })
 
+router.get('/:postId', [
+    param('postId').custom(id => db.Types.ObjectId.isValid(id))
+], async (req, res) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() })
+
+    if (!req.user)
+        return res.status(401).json({ errors: ['not logged in'] })
+
+    try {
+        const post = await Post.findOne({ _id: req.params.postId })
+            .select({
+                _id: 1,
+                content: 1,
+                user: 1,
+                date: 1,
+                likeCount: 1,
+                likes: {
+                    $elemMatch: { $eq: req.user._id }
+                },
+                dislikeCount: 1,
+                dislikes: {
+                    $elemMatch: { $eq: req.user._id }
+                },
+                comments: 1
+            })
+            .populate('user', 'name photo _id')
+            .populate({
+                path: 'comments',
+                select: '_id content user date',
+                options: { sort: { date: 1 } },
+                populate: {
+                    path: 'user',
+                    select: 'name photo _id'
+                }
+            })
+            .lean()
+        return res.status(200).json(post)
+    } catch (error) {
+        return res.status(500).json({ errors: [error] })
+    }
+})
+
 router.get('/', async (req, res) => {
 
     if (!req.user)
         return res.status(401).json({ errors: ['not logged in'] })
 
-    //await Post.updateMany({}, { $set: { likes: []} })
-    //await Post.updateMany({}, { $set: { dislikes: []} })
-
-    const posts = await Post.find({ topLevel: true },
-    )
+    const posts = await Post.find({ topLevel: true })
         .select({
             _id: 1,
             content: 1,

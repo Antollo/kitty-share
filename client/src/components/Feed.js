@@ -3,42 +3,46 @@ import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import qs from 'qs'
 import React from 'react'
+import { Scrollbars } from 'react-custom-scrollbars'
 import { withRouter } from 'react-router'
 import Post from './Post'
 
 
 const useStyles = (theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.primary.main,
-    },
-    form: {
-        width: '100%',
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(2, 0, 2),
-    },
-    container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
-    toolbar: theme.mixins.toolbar
-})
+        paper: {
+            marginTop: theme.spacing(8),
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
+        thumb: {
+            cursor: 'pointer',
+            borderRadius: 'inherit',
+            backgroundColor: theme.palette.text.secondary
+        },
+        form: {
+            width: '100%',
+            marginTop: theme.spacing(1),
+        },
+        submit: {
+            margin: theme.spacing(2, 0, 2),
+        },
+        container: {
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(4),
+        },
+        toolbar: theme.mixins.toolbar
+    })
 
-@withRouter
 class Feed extends React.Component {
 
     constructor(props) {
         super(props)
 
         this.search = this.search.bind(this)
+        this.renderThumb = this.renderThumb.bind(this);
+
+        this.props.fetchPosts()
     }
 
     search() {
@@ -53,45 +57,40 @@ class Feed extends React.Component {
         }
     }
 
+    renderThumb({ style }) {
+        return <div style={style} className={this.props.classes.thumb} />
+    }
+
     render() {
         const { classes } = this.props
+
         return (
-            /*<PerfectScrollbar>*/
-            <>
-                <Container maxWidth="sm" className={classes.container} >
-                    <Grid container spacing={4} wrap="nowrap" direction="column-reverse">
-                        {
-                            this.search().map(
-                                (post, id) => (
-                                    <Grid item key={id}>
-                                        <Post
-                                            {...(post.loading ? { loading: true } : {
-                                                loading: false,
-                                                _id: post._id,
-                                                userName: post.user.name,
-                                                userPhoto: post.user.photo,
-                                                date: post.date,
-                                                content: post.content,
-                                                likes: post.likes && post.likes.length !== 0,
-                                                likeCount: post.likeCount,
-                                                dislikes: post.dislikes && post.dislikes.length !== 0,
-                                                dislikeCount: post.dislikeCount,
-                                                name: this.props.name,
-                                                photo: this.props.photo,
-                                                comments: post.comments
-                                            })}
-                                        />
-                                    </Grid>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Scrollbars style={{ flexGrow: 1 }} autoHide renderThumbHorizontal={this.renderThumb} renderThumbVertical={this.renderThumb}>
+                    <Container maxWidth="sm" className={classes.container} >
+                        <Grid container spacing={4} wrap="nowrap" direction="column-reverse">
+                            {
+                                this.search().map(
+                                    (post, id) => (
+                                        <Grid item key={id}>
+                                            <Post
+                                                {...{
+                                                    name: this.props.name,
+                                                    photo: this.props.photo,
+                                                    ...post
+                                                }}
+                                            />
+                                        </Grid>
+                                    )
                                 )
-                            )
-                        }
-                    </Grid>
-                </Container >
+                            }
+                        </Grid>
+                    </Container >
+                </Scrollbars>
                 <div className={classes.toolbar} />
-            </>
-            /*</PerfectScrollbar>*/
+            </div>
         )
     }
 }
 
-export default withStyles(useStyles)(Feed)
+export default withStyles(useStyles)(withRouter(Feed))

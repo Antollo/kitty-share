@@ -5,6 +5,7 @@ import LogoutHandler from './LogoutHandler'
 import Navbar from './Navbar'
 import PathRedirect from './PathRedirect'
 import { Switch, Route, withRouter } from 'react-router'
+import SelfLoadingPost from './SelfLoadingPost'
 
 class AppMain extends React.Component {
 
@@ -42,7 +43,6 @@ class AppMain extends React.Component {
     }
 
     setPath(path) {
-        console.log(path)
         this.setState({
             path: path,
             push: this.state.path !== path.slice(0, -1)
@@ -56,13 +56,9 @@ class AppMain extends React.Component {
             .then(response => response.json())
             .then(data => {
                 this.setState({ posts: data })
-                console.log(data)
+                //console.log(data)
             })
             .catch(error => console.error(error))
-    }
-
-    componentDidMount() {
-        this.fetchPosts()
     }
 
     render() {
@@ -70,11 +66,11 @@ class AppMain extends React.Component {
             <>
                 <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts} />
                 <Switch>
-                    <Route path="/post/:id">
-                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} onAction={this.fetchPosts} />
-                    </Route>
+                    <Route path="/post/:_id" children={({ match }) =>
+                        (<SelfLoadingPost name={this.state.name} photo={this.state.photo} _id={match.params._id} />)
+                    } />
                     <Route>
-                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} onAction={this.fetchPosts} />
+                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} fetchPosts={this.fetchPosts} />
                     </Route>
                 </Switch>
                 <LogoutHandler name={this.state.name} >

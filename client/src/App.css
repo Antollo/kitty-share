@@ -13,10 +13,19 @@ h6 {
   margin-block-end: 2px;
 }
 
+html,
 body,
-#root {
+#root,
+.App {
   height: 100%;
 }
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.markdown
 
 .markdown {
   max-width: 100%;

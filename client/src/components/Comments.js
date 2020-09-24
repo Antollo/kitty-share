@@ -142,7 +142,7 @@ class Comments extends React.Component {
                 </ListItem>
                 <div className={classes.list}>
                     {
-                        this.props.comments.concat(this.state.comments).map((comment, id) => <Comment key={id} comment={comment}/>)
+                        this.props.comments.concat(this.state.comments).map((comment, id) => <Comment {...{ key: id, ...comment }} />)
                     }
                 </div>
 
