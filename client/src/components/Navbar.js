@@ -18,6 +18,9 @@ import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import React from 'react'
 import PostForm from './PostForm'
+import qs from 'qs'
+import { withRouter } from 'react-router'
+import clean from './clean'
 
 const useStyles = (theme) => ({
     text: {
@@ -47,7 +50,7 @@ const useStyles = (theme) => ({
     searchField: {
         padding: '4px 4px',
         [`${theme.breakpoints.up('xs')} and (orientation: landscape)`]: {
-            padding: '8px 8px',
+            padding: '2px 2px',
         },
         [theme.breakpoints.up('sm')]: {
             padding: '8px 8px',
@@ -72,30 +75,38 @@ class Navbar extends React.Component {
 
         this.state = {
             open: false,
-            searchText: ''
+            searchText: qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).search || ''
         }
 
         this.handleSearchText = this.handleSearchText.bind(this)
         this.handleSearchTextSubmit = this.handleSearchTextSubmit.bind(this)
-        this.setPath = this.setPath.bind(this)
+        this.setSearchQuery = this.setSearchQuery.bind(this)
     }
 
     handleSearchText(e) {
-        this.setPath(e.target.value)
+        this.setSearchQuery(e.target.value)
         this.setState({ searchText: e.target.value })
     }
 
     handleSearchTextSubmit(e) {
-        this.setPath(this.state.searchText)
+        this.setSearchQuery(this.state.searchText)
         this.setState({ searchText: '' })
         e.preventDefault()
     }
 
-    setPath(p) {
-        if (p && p.length)
-            this.props.setPath(`?search=${p}`)
+    setSearchQuery(searchText) {
+        const path = qs.stringify(clean({
+            ...qs.parse(this.props.location.search, { ignoreQueryPrefix: true }),
+            search: (searchText?.length) ? searchText : null
+        }), {
+            addQueryPrefix: true,
+            encode: false
+        })
+
+        if (this.state.searchText === searchText)
+            this.props.history.push(path)
         else
-            this.props.setPath('')
+            this.props.history.replace(path)
     }
 
     render() {
@@ -153,4 +164,4 @@ class Navbar extends React.Component {
     }
 }
 
-export default withStyles(useStyles)(Navbar)
+export default withStyles(useStyles)(withRouter(Navbar))

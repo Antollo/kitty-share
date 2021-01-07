@@ -53,20 +53,22 @@ class Post extends React.Component {
         super(props)
 
         this.state = {
-            expanded: false,
+            expanded: Boolean(props.expanded),
             likeCount: 0,
-            dislikeCount: 0
+            dislikeCount: 0,
+            tags: new Set()
         }
 
         this.like = this.like.bind(this)
         this.dislike = this.dislike.bind(this)
         this.expand = this.expand.bind(this)
+        this.setTags = this.setTags.bind(this)
     }
 
     like(event) {
         event.stopPropagation()
         this.setState({ likeCount: (this.state.likeCount ? 0 : 1) * (this.props.likes ? -1 : 1) })
-        if (this.props._id && this.props._id.length)
+        if (this.props._id?.length)
             fetch(`/api/posts/like/${this.props._id}`, {
                 method: 'GET'
             })
@@ -78,7 +80,7 @@ class Post extends React.Component {
     dislike(event) {
         event.stopPropagation()
         this.setState({ dislikeCount: (this.state.dislikeCount ? 0 : 1) * (this.props.dislikes ? -1 : 1) })
-        if (this.props._id && this.props._id.length)
+        if (this.props._id?.length)
             fetch(`/api/posts/dislike/${this.props._id}`, {
                 method: 'GET'
             })
@@ -90,6 +92,10 @@ class Post extends React.Component {
     expand(event) {
         event.stopPropagation()
         this.setState({ expanded: !this.state.expanded })
+    }
+
+    setTags(tags) {
+        this.setState({ tags: tags })
     }
 
     render() {
@@ -130,7 +136,7 @@ class Post extends React.Component {
                                     </>
                                 ) : (
                                         <Typography component="div" variant="body1">
-                                            <ReactMarkdownOptimized source={this.props.content} enableLargeImage />
+                                            <ReactMarkdownOptimized source={this.props.content} setTags={this.setTags} enableLargeImage />
                                         </Typography>
                                     )
                             }

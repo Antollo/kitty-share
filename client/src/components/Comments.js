@@ -11,6 +11,8 @@ import SendIcon from '@material-ui/icons/Send'
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Comment from './Comment'
+import Popover from '@material-ui/core/Popover';
+import ReactMarkdownOptimized from './ReactMarkdownOptimized'
 
 const useStyles = (theme) => ({
     root: {
@@ -29,7 +31,12 @@ const useStyles = (theme) => ({
     list: {
         display: 'flex',
         flexDirection: 'column-reverse'
-    }
+    },
+    paper: {
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.default,
+        maxWidth: '100%'
+    },
 })
 
 class Comments extends React.Component {
@@ -39,15 +46,30 @@ class Comments extends React.Component {
 
         this.state = {
             content: '',
-            comments: []
+            comments: [],
+            anchorEl: null,
+            popoverOpen: false
         }
 
         this.handleSubmit = this.handleSubmit.bind(this)
+        this.onContentChange = this.onContentChange.bind(this)
     }
 
-    componentDidUpdate(nextProps) {
-        if (nextProps.comments !== this.props.comments)
+    componentDidUpdate(prevProps) {
+        if (prevProps.comments !== this.props.comments)
             this.setState({ comments: [] })
+    }
+
+    onContentChange(event) {
+        this.setState({ content: event.target.value, popoverOpen: false, popoverAnchor: event.target.parentNode.parentNode.parentNode })
+
+        if (this.popoverTimeout)
+            clearTimeout(this.popoverTimeout)
+
+        if (event.target.value)
+            this.popoverTimeout = setTimeout(() => {
+                this.setState({ popoverOpen: true })
+            }, 1000);
     }
 
     handleSubmit(event) {
@@ -112,19 +134,19 @@ class Comments extends React.Component {
                         secondary={
                             <form onSubmit={e => this.handleSubmit(e)}>
                                 <TextField
-                                    autoFocus
                                     margin="normal"
                                     name="content"
                                     required
                                     fullWidth
-                                    label="Post content"
+                                    label="Comment content"
                                     placeholder="An interesting story..."
                                     multiline
                                     variant="outlined"
                                     className={classes.textField}
                                     size="small"
                                     value={this.state.content}
-                                    onChange={e => this.setState({ content: e.target.value })}
+                                    onChange={this.onContentChange}
+                                    onFocus={this.onContentChange}
                                     InputProps={{
                                         endAdornment: (
                                             <InputAdornment>
@@ -135,6 +157,32 @@ class Comments extends React.Component {
                                         )
                                     }}
                                 />
+                                <Popover
+                                    classes={{
+                                        paper: classes.paper,
+                                    }}
+                                    style={{
+                                        width: `${this.state.popoverAnchor?.offsetWidth}px`
+                                    }}
+                                    open={this.state.popoverOpen}
+                                    anchorEl={this.state.popoverAnchor}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                    onClose={() => this.setState({ popoverOpen: false })}
+                                    disableAutoFocus
+                                    disableEnforceFocus
+                                    disableRestoreFocus
+                                >
+                                    <Typography component="div" variant="body1">
+                                        <ReactMarkdownOptimized source={this.state.content} enableLargeImage />
+                                    </Typography>
+                                </Popover>
                             </form>
                         }
                         secondaryTypographyProps={{ component: 'div' }}

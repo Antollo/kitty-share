@@ -1,7 +1,7 @@
-import Fab from '@material-ui/core/Fab';
-import Grid from '@material-ui/core/Grid';
-import Icon from '@material-ui/core/Icon';
-import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import Fab from '@material-ui/core/Fab'
+import Grid from '@material-ui/core/Grid'
+import Icon from '@material-ui/core/Icon'
+import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles'
 import React from 'react';
 
 const facebookTheme = createMuiTheme({ palette: { primary: { main: '#4267B2' } } })

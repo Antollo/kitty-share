@@ -1,6 +1,10 @@
 import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
+import { withRouter } from 'react-router'
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Scrollable from './Scrollable'
 import React from 'react'
 import Post from './Post'
 
@@ -23,7 +27,6 @@ class SelfLoadingPost extends React.Component {
         }
 
         this.fetchPost = this.fetchPost.bind(this)
-
         this.fetchPost()
     }
 
@@ -48,11 +51,16 @@ class SelfLoadingPost extends React.Component {
         const { classes } = this.props
 
         return (
-            <>
+            <Scrollable>
                 <Container maxWidth="sm" className={classes.container} >
-                    <Grid container spacing={4} wrap="nowrap" direction="column-reverse">
+                    <Grid container spacing={4} wrap="nowrap" direction="column">
                         <Grid item>
-                            <Post
+                            <IconButton onClick={() => this.props.history.goBack()} >
+                                <ArrowBackIcon fontSize="default" />
+                            </IconButton>
+                        </Grid>
+                        <Grid item>
+                            <Post expanded
                                 {...{
                                     name: this.props.name,
                                     photo: this.props.photo,
@@ -62,11 +70,11 @@ class SelfLoadingPost extends React.Component {
                         </Grid>
 
                     </Grid>
-                </Container >
-                <div className={classes.toolbar} />
-            </>
+                </Container>
+            </Scrollable>
+
         )
     }
 }
 
-export default withStyles(useStyles)(SelfLoadingPost)
+export default withStyles(useStyles)(withRouter(SelfLoadingPost))

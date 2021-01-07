@@ -3,7 +3,6 @@ import { withCookies } from 'react-cookie'
 import Feed from './Feed'
 import LogoutHandler from './LogoutHandler'
 import Navbar from './Navbar'
-import PathRedirect from './PathRedirect'
 import { Switch, Route, withRouter } from 'react-router'
 import SelfLoadingPost from './SelfLoadingPost'
 
@@ -15,20 +14,16 @@ class AppMain extends React.Component {
         this.initialPosts = (new Array(5)).fill({ loading: true })
 
         this.state = {
-            path: this.props.location.pathname.slice(1) + this.props.location.search,
-            push: true,
             name: this._name(),
             photo: this._photo(),
             posts: this.initialPosts
         }
-
-        this.setPath = this.setPath.bind(this)
         this.fetchPosts = this.fetchPosts.bind(this)
     }
 
     _name() {
         const user = this.props.cookies.get('user')
-        if (user && user.name)
+        if (user?.name)
             return user.name
         else
             return ''
@@ -36,17 +31,10 @@ class AppMain extends React.Component {
 
     _photo() {
         const user = this.props.cookies.get('user')
-        if (user && user.photo)
+        if (user?.photo)
             return user.photo
         else
             return ''
-    }
-
-    setPath(path) {
-        this.setState({
-            path: path,
-            push: this.state.path !== path.slice(0, -1)
-        })
     }
 
     fetchPosts() {
@@ -64,21 +52,19 @@ class AppMain extends React.Component {
     render() {
         return (
             <>
-                <Navbar setPath={this.setPath} name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts} />
+                <Navbar name={this.state.name} photo={this.state.photo} onNewPost={this.fetchPosts} />
                 <Switch>
                     <Route path="/post/:_id" children={({ match }) =>
                         (<SelfLoadingPost name={this.state.name} photo={this.state.photo} _id={match.params._id} />)
                     } />
                     <Route>
-                        <Feed setPath={this.setPath} name={this.state.name} photo={this.state.photo} posts={this.state.posts} fetchPosts={this.fetchPosts} />
+                        <Feed name={this.state.name} photo={this.state.photo} posts={this.state.posts} fetchPosts={this.fetchPosts} />
                     </Route>
                 </Switch>
-                <LogoutHandler name={this.state.name} >
-                    <PathRedirect path={this.state.path} push={this.state.push} />
-                </LogoutHandler>
+                <LogoutHandler name={this.state.name} />
             </>
         )
     }
 }
 
-export default withCookies(withRouter(AppMain))
+export default withCookies(AppMain)
